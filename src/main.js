@@ -1,8 +1,9 @@
-import Phaser from 'phaser';
-import BootScene from './scenes/BootScene';
-import TitleScene from './scenes/TitleScene';
-import GameScene from './scenes/GameScene';
-import GameOverScene from './scenes/GameOverScene';
+// import Phaser from 'phaser'; - CDNでロードするため不要
+
+import BootScene from './scenes/BootScene.js';
+import TitleScene from './scenes/TitleScene.js';
+import GameScene from './scenes/GameScene.js';
+import GameOverScene from './scenes/GameOverScene.js';
 
 // ウィンドウサイズに応じたゲームサイズを計算
 function calculateGameSize() {
