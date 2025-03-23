@@ -31,18 +31,18 @@ export default class BootScene extends Phaser.Scene {
       loadingText.destroy();
     });
     
-    // アセットのロード
-    this.load.image('background', 'assets/images/background.png');
-    this.load.image('ball', 'assets/images/ball.png');
-    this.load.image('paddle', 'assets/images/paddle.png');
-    this.load.image('brick', 'assets/images/brick.png');
+    // アセットのロード - 相対パスに修正
+    this.load.image('background', './assets/images/background.png');
+    this.load.image('ball', './assets/images/ball.png');
+    this.load.image('paddle', './assets/images/paddle.png');
+    this.load.image('brick', './assets/images/brick.png');
     
-    // サウンドファイルの読み込み
-    this.load.audio('paddleHit', 'assets/sounds/paddle_hit.mp3');
-    this.load.audio('brickHit', 'assets/sounds/brick_hit.mp3');
-    this.load.audio('gameOver', 'assets/sounds/game_over.mp3');
-    this.load.audio('levelComplete', 'assets/sounds/level_complete.mp3');
-    this.load.audio('startGame', 'assets/sounds/start_game.mp3');
+    // サウンドファイルの読み込み - 相対パスに修正
+    this.load.audio('paddleHit', './assets/sounds/paddle_hit.mp3');
+    this.load.audio('brickHit', './assets/sounds/brick_hit.mp3');
+    this.load.audio('gameOver', './assets/sounds/game_over.mp3');
+    this.load.audio('levelComplete', './assets/sounds/level_complete.mp3');
+    this.load.audio('startGame', './assets/sounds/start_game.mp3');
   }
 
   create() {

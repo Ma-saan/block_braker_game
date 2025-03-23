@@ -1,9 +1,24 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+  // リポジトリ名をベースパスとして設定
+  // 以下のようにリポジトリ名を設定してください
+  base: '/block_braker_game/',
+  
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    // ソースマップを生成（デバッグ用）
+    sourcemap: true,
+  },
+  
+  // GitHub Pagesへのデプロイを考慮した設定
   server: {
-    host: '0.0.0.0', // すべてのネットワークインターフェースでリッスン
-    port: 3000,      // ポート番号（任意の数字に変更可能）
-    open: false      // サーバー起動時にブラウザを自動的に開く
-  }
+    host: true,
+    port: 3000,
+    open: true
+  },
+  
+  // アセットのURLを修正するプラグイン
+  plugins: []
 });

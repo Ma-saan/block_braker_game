@@ -4,52 +4,39 @@ import TitleScene from './scenes/TitleScene';
 import GameScene from './scenes/GameScene';
 import GameOverScene from './scenes/GameOverScene';
 
-// モバイル端末かどうかを判定
-const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-// 画面のサイズを取得
-const getGameSize = () => {
+// ウィンドウサイズに応じたゲームサイズを計算
+function calculateGameSize() {
   const width = window.innerWidth;
   const height = window.innerHeight;
   
-  // モバイルデバイスでは利用可能な最大サイズを使用
-  if (isMobile) {
+  // モバイルデバイス向けの最適化
+  // 横幅が縦幅より大きい場合（横向き）は、アスペクト比を調整
+  if (width > height) {
     return {
-      width: width,
-      height: height,
-      maxWidth: width,
-      maxHeight: height
+      width: Math.min(width, height * 1.5), // 横長すぎないように制限
+      height: height
     };
   } else {
-    // デスクトップでは適切なサイズに制限
     return {
-      width: Math.min(width, 400),
-      height: Math.min(height, 800),
-      maxWidth: width,
-      maxHeight: height
+      width: width,
+      height: Math.min(height, width * 1.8) // 縦長すぎないように制限
     };
   }
-};
+}
 
 // ゲームサイズを計算
-const gameSize = getGameSize();
+const gameSize = calculateGameSize();
 
-// ゲームの設定
+// Phaserの設定
 const config = {
   type: Phaser.AUTO,
   width: gameSize.width,
   height: gameSize.height,
+  parent: 'game-container',
   backgroundColor: '#000000',
   scale: {
-    mode: Phaser.Scale.FIT,
-    autoCenter: Phaser.Scale.CENTER_BOTH,
-    parent: 'game-container',
-    width: gameSize.width,
-    height: gameSize.height,
-    max: {
-      width: gameSize.maxWidth,
-      height: gameSize.maxHeight
-    }
+    mode: Phaser.Scale.RESIZE,
+    autoCenter: Phaser.Scale.CENTER_BOTH
   },
   physics: {
     default: 'arcade',
@@ -58,51 +45,20 @@ const config = {
       debug: false
     }
   },
-  input: {
-    activePointers: 2 // マルチタッチに対応
-  },
-  audio: {
-    disableWebAudio: false
-  },
-  scene: [BootScene, TitleScene, GameScene, GameOverScene],
-  render: {
-    pixelArt: false,
-    antialias: true
-  }
+  scene: [BootScene, TitleScene, GameScene, GameOverScene]
 };
 
 // ゲームインスタンスを作成
-window.game = new Phaser.Game(config);
+const game = new Phaser.Game(config);
 
-// 画面サイズ変更時の処理
-const resizeGame = () => {
-  if (window.game.isBooted) {
-    const newSize = getGameSize();
-    window.game.scale.resize(newSize.width, newSize.height);
-    window.game.scale.refresh();
-  }
-};
-
-// リサイズイベント
+// ウィンドウサイズが変更されたときの処理
 window.addEventListener('resize', () => {
-  resizeGame();
+  if (game.scale) {
+    game.scale.resize(window.innerWidth, window.innerHeight);
+  }
 });
 
-// オリエンテーション変更時
-window.addEventListener('orientationchange', () => {
-  setTimeout(() => {
-    resizeGame();
-  }, 200);
-});
+// ゲームインスタンスをグローバルに公開（デバッグや他のスクリプトからアクセスするため）
+window.game = game;
 
-// フルスクリーン切り替え時
-document.addEventListener('fullscreenchange', () => {
-  setTimeout(() => {
-    resizeGame();
-  }, 200);
-});
-document.addEventListener('webkitfullscreenchange', () => {
-  setTimeout(() => {
-    resizeGame();
-  }, 200);
-});
+export default game;
