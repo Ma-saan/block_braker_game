@@ -2,7 +2,6 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   // リポジトリ名をベースパスとして設定
-  // 以下のようにリポジトリ名を設定してください
   base: '/block_braker_game/',
   
   build: {
@@ -17,8 +16,5 @@ export default defineConfig({
     host: true,
     port: 3000,
     open: true
-  },
-  
-  // アセットのURLを修正するプラグイン
-  plugins: []
+  }
 });
