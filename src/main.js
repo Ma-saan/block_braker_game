@@ -4,6 +4,12 @@ import BootScene from './scenes/BootScene.js';
 import TitleScene from './scenes/TitleScene.js';
 import GameScene from './scenes/GameScene.js';
 import GameOverScene from './scenes/GameOverScene.js';
+// import Phaser from 'phaser'; - CDNでロードするため不要
+
+import BootScene from './scenes/BootScene.js';
+import TitleScene from './scenes/TitleScene.js';
+import GameScene from './scenes/GameScene.js';
+import GameOverScene from './scenes/GameOverScene.js';
 
 // アスペクト比を維持するためのゲームサイズ計算
 function calculateGameSize() {
@@ -31,15 +37,19 @@ function calculateGameSize() {
     };
   }
 }
+}
 
 // ゲームサイズを計算
 const gameSize = calculateGameSize();
+const gameSize = calculateGameSize();
 
+// Phaserの設定
 // Phaserの設定
 const config = {
   type: Phaser.AUTO,
   width: gameSize.width,
   height: gameSize.height,
+  parent: 'game-container',
   parent: 'game-container',
   backgroundColor: '#000000',
   scale: {
@@ -56,9 +66,11 @@ const config = {
     }
   },
   scene: [BootScene, TitleScene, GameScene, GameOverScene]
+  scene: [BootScene, TitleScene, GameScene, GameOverScene]
 };
 
 // ゲームインスタンスを作成
+const game = new Phaser.Game(config);
 const game = new Phaser.Game(config);
 
 // 現在のゲームの向き（縦/横）を保存

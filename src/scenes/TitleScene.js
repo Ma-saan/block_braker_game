@@ -1,4 +1,4 @@
-import HighScoreManager from '../utils/HighScoreManager';
+import HighScoreManager from '../utils/HighScoreManager.js';
 
 export default class TitleScene extends Phaser.Scene {
   constructor() {
