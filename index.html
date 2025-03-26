@@ -1,3 +1,4 @@
+<!-- index.html の修正 -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -6,7 +7,6 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="theme-color" content="#000000">
   <title>ブロック崩し</title>
   <style>
     html, body {
@@ -34,76 +34,35 @@
     canvas {
       display: block;
       margin: 0 auto;
-      /* キャンバスの拡大縮小をスムーズに */
-      transition: width 0.3s ease, height 0.3s ease;
     }
     
-    #orientation-message {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.9);
-      z-index: 2000;
+    #fullscreen-btn {
+      position: absolute;
+      z-index: 1000;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.5);
       color: white;
-      text-align: center;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      font-size: 24px;
-      font-family: Arial, sans-serif;
-    }
-    
-    #orientation-message img {
-      width: 120px;
-      height: 120px;
-      margin-bottom: 20px;
-      animation: rotate 1.5s infinite ease-in-out;
-    }
-    
-    @keyframes rotate {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(90deg); }
-    }
-    
-    /* モバイルデバイスでの表示を最適化 */
-    @media (max-width: 768px) {
-      canvas {
-        max-width: 100%;
-        max-height: 100%;
-      }
+      border: none;
+      border-radius: 5px;
+      padding: 10px 15px;
+      font-size: 16px;
     }
   </style>
 </head>
 <body>
   <div id="game-container"></div>
   
-  <!-- 向き指示メッセージ（必要な場合に表示） -->
-  <div id="orientation-message">
-    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxMjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cmVjdCB4PSI1IiB5PSIyIiB3aWR0aD0iMTQiIGhlaWdodD0iMjAiIHJ4PSIyIiByeT0iMiIvPjxsaW5lIHgxPSIxMiIgeTE9IjE4IiB4Mj0iMTIiIHkyPSIxOCIvPjwvc3ZnPg==" alt="端末を回転">
-    <p>最高のプレイ体験のため<br>端末を回転させてください</p>
-  </div>
+  <!-- Phaser CDNをロード - type="module"は使用しない -->
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
   
-  <!-- Phaser CDNを追加 -->
-  <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
-  
-  <!-- 相対パスに変更 -->
+  <!-- ゲームスクリプトをロード（type="module"を使用） -->
   <script type="module" src="./src/main.js"></script>
+  
   <script>
-    // 向き指示メッセージを制御する変数
-    let preferLandscape = false;
-    let orientationMessage;
-    
-    // DOMコンテンツがロードされた後に要素を取得
-    document.addEventListener('DOMContentLoaded', function() {
-      orientationMessage = document.getElementById('orientation-message');
-    });
-    
     // 画面のスクロールを防止
     document.addEventListener('touchmove', function(e) {
-      if (e.touches.length > 1 || e.scale !== 1) {
+      if (e.touches.length > 1) {
         e.preventDefault();
       }
     }, { passive: false });
@@ -140,59 +99,24 @@
       }, 100);
     }
     
-    // 向きが変わったときの処理
-    function checkOrientation() {
-      // 管理しやすくするために明示的に向きを計算
-      const isLandscape = window.innerWidth > window.innerHeight;
-      
-      // 要素が取得できていることを確認
-      if (orientationMessage) {
-        // ゲームが横向きを優先する場合の処理
-        if (preferLandscape && !isLandscape) {
-          // 縦向きで表示しているときに警告表示
-          orientationMessage.style.display = 'flex';
-        } else {
-          // それ以外の場合は警告を隠す
-          orientationMessage.style.display = 'none';
-        }
-      }
-      
-      // スクロールをリセット
-      window.scrollTo(0, 0);
-      
-      // ゲームがロードされている場合はリフレッシュ
-      if (window.game && window.game.scale) {
-        setTimeout(() => window.game.scale.refresh(), 100);
-      }
-    }
-    
-    // 画面タップでフルスクリーン
-    document.addEventListener('click', goFullScreen, { once: true });
-    document.addEventListener('touchstart', goFullScreen, { once: true });
+    // 画面タップでフルスクリーン - 必要な場合のみ
+    // document.addEventListener('click', goFullScreen, { once: true });
+    // document.addEventListener('touchstart', goFullScreen, { once: true });
     
     // 画面回転時の処理
     window.addEventListener('orientationchange', function() {
       setTimeout(() => {
-        checkOrientation();
-      }, 200);
-    });
-    
-    // 画面サイズ変更時にも向きをチェック
-    window.addEventListener('resize', function() {
-      setTimeout(() => {
-        checkOrientation();
+        window.scrollTo(0, 0);
+        if (window.game && window.game.scale) {
+          window.game.scale.refresh();
+        }
       }, 200);
     });
     
     // ページロード完了時の処理
     window.addEventListener('load', function() {
-      // ゲームの向きに応じた設定
-      // モバイル端末でプレイする場合は、必要に応じてpreferLandscapeをtrueに変更
-      preferLandscape = false; // 必要に応じてゲームの推奨向きを設定
-      
       setTimeout(() => {
         window.scrollTo(0, 0);
-        checkOrientation();
       }, 100);
       
       // iOS 13以降のため、初回タップでオーディオコンテキストを起動

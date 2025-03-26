@@ -1,9 +1,14 @@
+// src/scenes/BootScene.js - 修正版
+
 export default class BootScene extends Phaser.Scene {
   constructor() {
     super({ key: 'BootScene' });
   }
 
   preload() {
+    // Canvas2D警告対応 - willReadFrequentlyを設定
+    this.renderer.willReadFrequently = true;
+    
     // ロード画面の設定
     const progressBar = this.add.graphics();
     const progressBox = this.add.graphics();
@@ -31,21 +36,49 @@ export default class BootScene extends Phaser.Scene {
       loadingText.destroy();
     });
     
-    // アセットのロード - 相対パスに修正
-    this.load.image('background', './assets/images/background.png');
-    this.load.image('ball', './assets/images/ball.png');
-    this.load.image('paddle', './assets/images/paddle.png');
-    this.load.image('brick', './assets/images/brick.png');
+    // ベースパスを動的に取得
+    let basePath = '';
     
-    // サウンドファイルの読み込み - 相対パスに修正
-    this.load.audio('paddleHit', './assets/sounds/paddle_hit.mp3');
-    this.load.audio('brickHit', './assets/sounds/brick_hit.mp3');
-    this.load.audio('gameOver', './assets/sounds/game_over.mp3');
-    this.load.audio('levelComplete', './assets/sounds/level_complete.mp3');
-    this.load.audio('startGame', './assets/sounds/start_game.mp3');
+    // GitHub Pagesでのデプロイを検出
+    const isGitHubPages = window.location.hostname.includes('github.io');
+    if (isGitHubPages) {
+      // リポジトリ名を抽出
+      const pathSegments = window.location.pathname.split('/');
+      if (pathSegments.length > 1) {
+        // リポジトリ名がパスの最初の部分
+        const repoName = pathSegments[1];
+        basePath = `/${repoName}`;
+      }
+    }
+    
+    console.log('Asset base path:', basePath);
+    
+    // アセットのロード - 相対パスの前にベースパスを追加
+    this.load.setPath(`${basePath}/assets`);
+    
+    this.load.image('background', 'images/background.png');
+    this.load.image('ball', 'images/ball.png');
+    this.load.image('paddle', 'images/paddle.png');
+    this.load.image('brick', 'images/brick.png');
+    
+    // サウンドファイルの読み込み
+    this.load.audio('paddleHit', 'sounds/paddle_hit.mp3');
+    this.load.audio('brickHit', 'sounds/brick_hit.mp3');
+    this.load.audio('gameOver', 'sounds/game_over.mp3');
+    this.load.audio('levelComplete', 'sounds/level_complete.mp3');
+    this.load.audio('startGame', 'sounds/start_game.mp3');
+    
+    // もしアセットの読み込みに失敗したら
+    this.load.on('loaderror', (file) => {
+      console.error('Failed to load asset:', file.key, file.src);
+    });
   }
 
   create() {
+    // 全てのアセットが正常に読み込まれたかレポート
+    console.log('All assets loaded successfully.');
+    
+    // タイトルシーンへ
     this.scene.start('TitleScene');
   }
 }
