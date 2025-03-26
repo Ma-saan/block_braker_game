@@ -512,4 +512,55 @@ export default class GameScene extends Phaser.Scene {
     this.isGameStarted = false;
     this.startText.setVisible(true);
   }
+
+// ここから新しく追加するメソッド
+handleOrientationChange(orientation) {
+  console.log(`向きの変更を検出: ${orientation}`);
+  
+  // ブロックとパドルの再配置
+  this.resizeGameElements();
+  
+  // ボールがパドル上にある場合は位置を調整
+  if (!this.isGameStarted && this.ball.getData('onPaddle')) {
+    this.resetBall();
+  }
+  
+  // テキスト要素の再配置
+  this.repositionUI();
 }
+
+resizeGameElements() {
+  // パドルの再配置 - 画面の高さの80%の位置
+  const paddleY = this.cameras.main.height * 0.80;
+  this.paddle.setPosition(this.paddle.x, paddleY);
+  
+  // ブロックを再配置する必要がある場合
+  // 注: 現在プレイ中の場合は再配置しない
+  if (!this.isGameStarted || this.levelCompleting) {
+    // 既存のブロックをクリア
+    this.bricks.clear(true, true);
+    // 新しいレイアウトでブロックを作成
+    this.createBricks();
+  }
+}
+
+repositionUI() {
+  // スコアテキストとライフテキストの位置を更新
+  this.scoreText.setPosition(16, 16);
+  
+  this.highScoreText.setPosition(this.cameras.main.width / 2, 16);
+  this.highScoreText.setOrigin(0.5, 0);
+  
+  this.livesText.setPosition(this.cameras.main.width - 16, 16);
+  this.livesText.setOrigin(1, 0);
+  
+  this.levelText.setPosition(this.cameras.main.width / 2, 40);
+  this.levelText.setOrigin(0.5, 0);
+  
+  // 開始指示テキストが表示されている場合は中央に配置
+  if (this.startText && this.startText.visible) {
+    this.startText.setPosition(this.cameras.main.width / 2, this.cameras.main.height / 2);
+    this.startText.setOrigin(0.5);
+  }
+}
+}  // ← クラスの終了括弧
